@@ -1,0 +1,1 @@
+# E-Shop Frontend - Electronic and Mobile Commerce 2026
