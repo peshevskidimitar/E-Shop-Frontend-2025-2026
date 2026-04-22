@@ -1,34 +1,31 @@
-import { useEffect, useState } from 'react';
-import productApi from '../api/productApi.ts';
-
-const initialState = {
-  products: [],
-  loading: true
-};
+import { useEffect, useState, useCallback } from 'react';
+import productApi from '../api/productApi';
+import type { Product } from '../api/types/product';
 
 const useProducts = () => {
-  const [state, setState] = useState(initialState);
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<Error | null>(null);
 
-  useEffect(() => {
-    productApi
-      .findAll()
-      .then((response) => {
-        setState({
-          products: response.data,
-          loading: false
-        });
-      })
-      .catch((error) => {
-          console.log(error);
-          setState({
-            products: [],
-            loading: false
-          });
-        }
-      );
+  const fetch = useCallback(async () => {
+    setLoading(true);
+
+    try {
+      const response = await productApi.findAll();
+      setProducts(response.data);
+      setError(null);
+    } catch (err) {
+      setError(err instanceof Error ? err : new Error('Unknown error occurred'));
+    } finally {
+      setLoading(false);
+    }
   }, []);
 
-  return state;
+  useEffect(() => {
+    void fetch();
+  }, [fetch]);
+
+  return { products, loading, error, fetch };
 };
 
 export default useProducts;
