@@ -19,7 +19,7 @@ const useProductDetails = (id?: string) => {
       setProductDetails(response.data);
       setError(null);
     } catch (err) {
-      setError(err instanceof Error ? err : new Error('An unknown error occurred'));
+      setError(err instanceof Error ? err : new Error('An unknown error occurred.'));
     } finally {
       setLoading(false);
     }
