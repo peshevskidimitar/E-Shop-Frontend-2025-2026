@@ -1,3 +1,4 @@
+import './ProductsPage.css';
 import useProducts from '../../../hooks/useProducts.ts';
 import { Box, CircularProgress } from '@mui/material';
 import ProductGrid from '../../components/product/ProductGrid/ProductGrid.tsx';
