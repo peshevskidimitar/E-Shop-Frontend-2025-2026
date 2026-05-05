@@ -6,6 +6,7 @@ export interface Product {
   description: string;
   price: number;
   quantity: number;
+  categoryId: number;
 }
 
 export interface ProductDetails {
@@ -15,4 +16,12 @@ export interface ProductDetails {
   price: number;
   quantity: number;
   category: Category;
+}
+
+export interface ProductFormData {
+  name: string;
+  description: string;
+  price: number;
+  quantity: number;
+  categoryId: number;
 }
