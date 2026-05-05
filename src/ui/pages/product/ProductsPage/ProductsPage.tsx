@@ -1,12 +1,16 @@
 import './ProductsPage.css';
-import useProducts from '../../../hooks/useProducts.ts';
+import useProducts from '../../../../hooks/useProducts.ts';
 import { Alert, Box, Button, CircularProgress, Snackbar } from '@mui/material';
-import ProductGrid from '../../components/product/ProductGrid/ProductGrid.tsx';
+import ProductGrid from '../../../components/product/ProductGrid/ProductGrid.tsx';
 import { useState } from 'react';
-import AddProductDialog from '../../components/product/AddProductDialog/AddProductDialog.tsx';
-import type { ProductFormData } from '../../../api/types/product.ts';
+import AddProductDialog from '../../../components/product/AddProductDialog/AddProductDialog.tsx';
+import type { ProductFormData } from '../../../../api/types/product.ts';
+import useAuth from '../../../../hooks/useAuth.ts';
 
 const ProductsPage = () => {
+  const { user } = useAuth();
+  const isAdmin = user?.roles.includes('ROLE_ADMINISTRATOR') ?? false;
+
   const { products, loading, onAdd, onEdit, onDelete } = useProducts();
 
   const [addProductDialogOpen, setAddProductDialogOpen] = useState<boolean>(false);
@@ -36,11 +40,13 @@ const ProductsPage = () => {
       )}
       {!loading &&
        <>
-         <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 2 }}>
-           <Button variant='contained' color='primary' onClick={() => setAddProductDialogOpen(true)}>
-             Add Product
-           </Button>
-         </Box>
+         {isAdmin && (
+           <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 2 }}>
+             <Button variant='contained' color='primary' onClick={() => setAddProductDialogOpen(true)}>
+               Add Product
+             </Button>
+           </Box>
+         )}
          <ProductGrid products={products} onEdit={onEdit} onDelete={onDelete}/>
          <Snackbar
            open={snackbar.open}

@@ -1,9 +1,10 @@
-import useProductDetails from '../../../hooks/useProductDetails.ts';
+import useProductDetails from '../../../../hooks/useProductDetails.ts';
 import { Link, useNavigate, useParams } from 'react-router';
 import {
   Avatar, Box, Breadcrumbs, Button, Chip, CircularProgress, Grid, Paper, Stack, Typography
 } from '@mui/material';
 import { ArrowBack, Category, FavoriteBorder, Share, ShoppingCart } from '@mui/icons-material';
+import './ProductDetailsPage.css';
 
 const ProductDetailsPage = () => {
   const navigate = useNavigate();

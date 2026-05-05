@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import type { Category } from '../api/types/category.ts';
 import categoryApi from '../api/categoryApi.ts';
 
@@ -7,7 +7,7 @@ const useCategories = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<Error | null>(null);
 
-  const fetch = async () => {
+  const fetch = useCallback(async () => {
     setLoading(true);
     setError(null);
 
@@ -19,11 +19,11 @@ const useCategories = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
     void fetch();
-  }, []);
+  }, [fetch]);
 
   return { categories, loading, error, fetch };
 };

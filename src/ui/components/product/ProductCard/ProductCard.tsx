@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router';
 import { useState } from 'react';
 import EditProductDialog from '../EditProductDialog/EditProductDialog.tsx';
 import DeleteProductDialog from '../DeleteProductDialog/DeleteProductDialog.tsx';
+import useAuth from '../../../../hooks/useAuth.ts';
 
 interface ProductCardProps {
   product: Product;
@@ -15,6 +16,9 @@ interface ProductCardProps {
 }
 
 const ProductCard = ({ product, onEdit, onDelete }: ProductCardProps) => {
+  const { user } = useAuth();
+  const isAdmin = user?.roles.includes('ROLE_ADMINISTRATOR') ?? false;
+
   const navigate = useNavigate();
 
   const [snackbar, setSnackbar] = useState<{ open: boolean; message: string }>({
@@ -50,9 +54,9 @@ const ProductCard = ({ product, onEdit, onDelete }: ProductCardProps) => {
   return (
     <>
       <Card sx={{ maxWidth: 300, height: '100%', display: 'flex', flexDirection: 'column' }}>
-        <CardContent sx={{flexGrow: 1, display: 'flex', flexDirection: 'column'}}>
+        <CardContent sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
           <Typography variant='h5'>{product.name}</Typography>
-          <Typography variant='subtitle1' sx={{flexGrow: 1}}>{product.description}</Typography>
+          <Typography variant='subtitle1' sx={{ flexGrow: 1 }}>{product.description}</Typography>
           <Typography variant='h6' sx={{ textAlign: 'right' }}>${product.price}</Typography>
           <Typography variant='body2' sx={{ textAlign: 'left' }}>{product.quantity} piece(s) available</Typography>
         </CardContent>
@@ -64,8 +68,24 @@ const ProductCard = ({ product, onEdit, onDelete }: ProductCardProps) => {
             Info
           </Button>
           <Box>
-            <Button startIcon={<EditIcon/>} color='warning' onClick={() => setEditProductDialogOpen(true)}>Edit</Button>
-            <Button startIcon={<DeleteIcon/>} color='error' onClick={() => setDeleteProductDialogOpen(true)}>Delete</Button>
+            {isAdmin && (
+              <Button
+                startIcon={<EditIcon/>}
+                color='warning'
+                onClick={() => setEditProductDialogOpen(true)}
+              >
+                Edit
+              </Button>
+            )}
+            {isAdmin && (
+              <Button
+                startIcon={<DeleteIcon/>}
+                color='error'
+                onClick={() => setDeleteProductDialogOpen(true)}
+              >
+                Delete
+              </Button>
+            )}
           </Box>
         </CardActions>
       </Card>

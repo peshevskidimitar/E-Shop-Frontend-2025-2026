@@ -57,7 +57,7 @@ const EditProductDialog = ({ product, open, onClose, onEdit }: EditProductDialog
 
   return (
     <Dialog open={open} onClose={onClose} fullWidth maxWidth='sm'>
-      <DialogTitle>Add Product</DialogTitle>
+      <DialogTitle>Edit Product</DialogTitle>
       <DialogContent>
         <TextField
           margin='dense'
