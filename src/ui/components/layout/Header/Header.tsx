@@ -10,7 +10,8 @@ import useAuth from '../../../../hooks/useAuth.ts';
 
 const pages = [
   { path: '/', name: 'home', authenticated: false },
-  { path: '/products', name: 'products', authenticated: true }
+  { path: '/products', name: 'products', authenticated: true },
+  { path: '/shopping-cart', name: 'cart', authenticated: true }
 ];
 
 const Header = () => {

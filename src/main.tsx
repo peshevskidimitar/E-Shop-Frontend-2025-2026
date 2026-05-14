@@ -3,11 +3,14 @@ import { createRoot } from 'react-dom/client';
 import './index.css';
 import App from './App.tsx';
 import AuthProvider from './providers/authProvider.tsx';
+import SnackbarProvider from './providers/snackbarProvider.tsx';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <AuthProvider>
-      <App/>
+      <SnackbarProvider>
+        <App/>
+      </SnackbarProvider>
     </AuthProvider>
   </StrictMode>
 );

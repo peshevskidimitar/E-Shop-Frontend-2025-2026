@@ -1,9 +1,9 @@
 import axiosInstance from '../axios/axios.ts';
-import type { Category } from './types/category.ts';
+import type { CategoryResponse } from './types/category.ts';
 
 const categoryApi = {
   findAll: async () => {
-    return await axiosInstance.get<Category[]>('/categories');
+    return await axiosInstance.get<CategoryResponse[]>('/categories');
   }
 };
 

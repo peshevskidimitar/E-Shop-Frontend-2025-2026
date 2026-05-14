@@ -4,29 +4,29 @@ import AuthContext from '../contexts/authContext.ts';
 import * as React from 'react';
 import type { UserPayload } from '../api/types/user.ts';
 
-const decode = (jwtToken: string): UserPayload | null => {
+const tryDecode = (jwtToken: string): UserPayload | null => {
   try {
     return jwtDecode<UserPayload>(jwtToken);
-  } catch (err) {
-    console.log(err);
+  } catch {
     return null;
   }
 };
 
 const initializeUser = (): UserPayload | null => {
   const jwtToken = localStorage.getItem('token');
-  return jwtToken ? decode(jwtToken) : null;
+  return jwtToken ? tryDecode(jwtToken) : null;
 };
 
 const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<UserPayload | null>(initializeUser);
 
   const login = useCallback((jwtToken: string) => {
-    const payload = decode(jwtToken);
-    if (payload) {
-      localStorage.setItem('token', jwtToken);
-      setUser(payload);
+    const payload = tryDecode(jwtToken);
+    if (!payload) {
+      throw new Error('Invalid session token.');
     }
+    localStorage.setItem('token', jwtToken);
+    setUser(payload);
   }, []);
 
   const logout = useCallback(() => {

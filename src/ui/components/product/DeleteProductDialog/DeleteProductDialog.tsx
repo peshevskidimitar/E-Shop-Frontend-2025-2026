@@ -1,14 +1,16 @@
-import type { Product } from '../../../../api/types/product.ts';
+import type { ProductResponse } from '../../../../api/types/product.ts';
 import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material';
+import useProducts from '../../../../hooks/useProducts.ts';
 
 interface DeleteProductDialogProps {
-  product: Product;
+  product: ProductResponse;
   open: boolean,
   onClose: () => void;
-  onDelete: (id: number) => Promise<void>;
 }
 
-const DeleteProductDialog = ({ product, open, onClose, onDelete }: DeleteProductDialogProps) => {
+const DeleteProductDialog = ({ product, open, onClose }: DeleteProductDialogProps) => {
+  const { onDelete } = useProducts();
+
   const handleSubmit = async () => {
     await onDelete(product.id);
     onClose();

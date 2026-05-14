@@ -1,4 +1,6 @@
 import useProductDetails from '../../../../hooks/useProductDetails.ts';
+import useShoppingCart from '../../../../hooks/useShoppingCart.ts';
+import useSnackbar from '../../../../hooks/useSnackbar.ts';
 import { Link, useNavigate, useParams } from 'react-router';
 import {
   Avatar, Box, Breadcrumbs, Button, Chip, CircularProgress, Grid, Paper, Stack, Typography
@@ -10,6 +12,20 @@ const ProductDetailsPage = () => {
   const navigate = useNavigate();
   const { id } = useParams();
   const { productDetails } = useProductDetails(id);
+  const { onAdd } = useShoppingCart();
+  const { showSnackbar } = useSnackbar();
+
+  const handleAddToCart = async () => {
+    if (!productDetails) {
+      return;
+    }
+    try {
+      await onAdd(productDetails.id, 1);
+      showSnackbar(`Added ${productDetails.name} to cart.`, 'success');
+    } catch {
+      // error already surfaced by useShoppingCart
+    }
+  };
 
   if (!productDetails) {
     return <Box className='progress-box'><CircularProgress/></Box>;
@@ -79,7 +95,14 @@ const ProductDetailsPage = () => {
 
           <Grid size={12} sx={{ display: 'flex', justifyContent: 'space-between' }}>
             <Stack direction='row' spacing={2}>
-              <Button variant='contained' color='primary' startIcon={<ShoppingCart/>} size='large'>
+              <Button
+                variant='contained'
+                color='primary'
+                startIcon={<ShoppingCart/>}
+                size='large'
+                disabled={productDetails.quantity <= 0}
+                onClick={handleAddToCart}
+              >
                 Add to Cart
               </Button>
               <Button variant='outlined' color='secondary' startIcon={<FavoriteBorder/>}>

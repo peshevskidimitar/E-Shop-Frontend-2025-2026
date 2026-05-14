@@ -3,10 +3,11 @@ import {
   Dialog, DialogActions, DialogContent, DialogTitle, FormControl, InputLabel, MenuItem, Select, type SelectChangeEvent,
   TextField
 } from '@mui/material';
-import useCategories from '../../../../hooks/useCategories.ts';
 import { useState } from 'react';
-import type { ProductFormData } from '../../../../api/types/product.ts';
 import * as React from 'react';
+import useCategories from '../../../../hooks/useCategories.ts';
+import useProducts from '../../../../hooks/useProducts.ts';
+import type { CreateProductRequest, ProductResponse } from '../../../../api/types/product.ts';
 
 interface FormData {
   name: string;
@@ -16,7 +17,7 @@ interface FormData {
   categoryId: string;
 }
 
-const initialFormData: FormData = {
+const emptyFormData: FormData = {
   name: '',
   description: '',
   price: '',
@@ -24,16 +25,29 @@ const initialFormData: FormData = {
   categoryId: ''
 };
 
-interface AddProductDialogProps {
+const productToFormData = (product: ProductResponse): FormData => ({
+  name: product.name,
+  description: product.description,
+  price: product.price.toString(),
+  quantity: product.quantity.toString(),
+  categoryId: product.categoryId.toString()
+});
+
+interface ProductFormDialogProps {
   open: boolean;
   onClose: () => void;
-  onAdd: (data: ProductFormData) => Promise<void>;
+  product?: ProductResponse;
 }
 
-const AddProductDialog = ({ open, onClose, onAdd }: AddProductDialogProps) => {
+const AddOrEditProductDialog = ({ open, onClose, product }: ProductFormDialogProps) => {
   const { categories } = useCategories();
+  const { onAdd, onEdit } = useProducts();
 
-  const [formData, setFormData] = useState<FormData>(initialFormData);
+  const isEdit = product !== undefined;
+
+  const [formData, setFormData] = useState<FormData>(
+    product ? productToFormData(product) : emptyFormData
+  );
 
   const handleChange = (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement> | SelectChangeEvent
@@ -43,7 +57,7 @@ const AddProductDialog = ({ open, onClose, onAdd }: AddProductDialogProps) => {
   };
 
   const handleSubmit = async () => {
-    const payload: ProductFormData = {
+    const payload: CreateProductRequest = {
       name: formData.name.trim(),
       description: formData.description.trim(),
       price: Number(formData.price),
@@ -51,14 +65,18 @@ const AddProductDialog = ({ open, onClose, onAdd }: AddProductDialogProps) => {
       categoryId: Number(formData.categoryId)
     };
 
-    await onAdd(payload);
-    setFormData({ ...initialFormData });
+    if (isEdit) {
+      await onEdit(product.id, payload);
+    } else {
+      await onAdd(payload);
+      setFormData(emptyFormData);
+    }
     onClose();
   };
 
   return (
     <Dialog open={open} onClose={onClose} fullWidth maxWidth='sm'>
-      <DialogTitle>Add Product</DialogTitle>
+      <DialogTitle>{isEdit ? 'Edit Product' : 'Add Product'}</DialogTitle>
       <DialogContent>
         <TextField
           margin='dense'
@@ -112,10 +130,12 @@ const AddProductDialog = ({ open, onClose, onAdd }: AddProductDialogProps) => {
       </DialogContent>
       <DialogActions>
         <Button onClick={onClose}>Cancel</Button>
-        <Button onClick={handleSubmit} variant='contained' color='primary'>Add</Button>
+        <Button onClick={handleSubmit} variant='contained' color='primary'>
+          {isEdit ? 'Edit' : 'Add'}
+        </Button>
       </DialogActions>
     </Dialog>
   );
 };
 
-export default AddProductDialog;
+export default AddOrEditProductDialog;

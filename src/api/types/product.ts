@@ -1,6 +1,6 @@
-import type { Category } from './category.ts';
+import type { CategoryResponse } from './category.ts';
 
-export interface Product {
+export interface ProductResponse {
   id: number,
   name: string;
   description: string;
@@ -9,16 +9,16 @@ export interface Product {
   categoryId: number;
 }
 
-export interface ProductDetails {
+export interface ProductDetailsResponse {
   id: number,
   name: string;
   description: string;
   price: number;
   quantity: number;
-  category: Category;
+  category: CategoryResponse;
 }
 
-export interface ProductFormData {
+export interface CreateProductRequest {
   name: string;
   description: string;
   price: number;

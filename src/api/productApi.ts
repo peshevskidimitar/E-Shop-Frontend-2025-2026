@@ -1,21 +1,21 @@
 import axiosInstance from '../axios/axios.ts';
-import type { ProductFormData, Product, ProductDetails } from './types/product.ts';
+import type { CreateProductRequest, ProductResponse, ProductDetailsResponse } from './types/product.ts';
 
 const productApi = {
   findAll: async () => {
-    return await axiosInstance.get<Product[]>('/products');
+    return await axiosInstance.get<ProductResponse[]>('/products');
   },
   findWithDetailsById: async (id: string) => {
-    return await axiosInstance.get<ProductDetails>(`/products/${id}/details`);
+    return await axiosInstance.get<ProductDetailsResponse>(`/products/${id}/details`);
   },
-  add: async (data: ProductFormData) => {
-    return await axiosInstance.post<Product>('/products/add', data);
+  add: async (data: CreateProductRequest) => {
+    return await axiosInstance.post<ProductResponse>('/products/add', data);
   },
-  edit: async (id: string, data: ProductFormData) => {
-    return await axiosInstance.put<Product>(`/products/${id}/edit`, data);
+  edit: async (id: string, data: CreateProductRequest) => {
+    return await axiosInstance.put<ProductResponse>(`/products/${id}/edit`, data);
   },
   delete: async (id: string) => {
-    return await axiosInstance.delete<Product>(`/products/${id}/delete`);
+    return await axiosInstance.delete<ProductResponse>(`/products/${id}/delete`);
   }
 };
 

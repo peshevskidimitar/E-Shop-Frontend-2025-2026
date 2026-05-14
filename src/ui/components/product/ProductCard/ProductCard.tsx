@@ -1,55 +1,26 @@
-import { Alert, Box, Button, Card, CardActions, CardContent, Snackbar, Typography } from '@mui/material';
+import { Box, Button, Card, CardActions, CardContent, Typography } from '@mui/material';
 import InfoIcon from '@mui/icons-material/Info';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
-import type { Product, ProductFormData } from '../../../../api/types/product.ts';
+import type { ProductResponse } from '../../../../api/types/product.ts';
 import { useNavigate } from 'react-router';
 import { useState } from 'react';
-import EditProductDialog from '../EditProductDialog/EditProductDialog.tsx';
+import AddOrEditProductDialog from '../AddOrEditProductDialog/AddOrEditProductDialog.tsx';
 import DeleteProductDialog from '../DeleteProductDialog/DeleteProductDialog.tsx';
 import useAuth from '../../../../hooks/useAuth.ts';
 
 interface ProductCardProps {
-  product: Product;
-  onEdit: (id: number, data: ProductFormData) => Promise<void>;
-  onDelete: (id: number) => Promise<void>;
+  product: ProductResponse;
 }
 
-const ProductCard = ({ product, onEdit, onDelete }: ProductCardProps) => {
+const ProductCard = ({ product }: ProductCardProps) => {
   const { user } = useAuth();
   const isAdmin = user?.roles.includes('ROLE_ADMINISTRATOR') ?? false;
 
   const navigate = useNavigate();
 
-  const [snackbar, setSnackbar] = useState<{ open: boolean; message: string }>({
-    open: false,
-    message: ''
-  });
-
   const [editProductDialogOpen, setEditProductDialogOpen] = useState<boolean>(false);
   const [deleteProductDialogOpen, setDeleteProductDialogOpen] = useState<boolean>(false);
-
-  const handleEdit = async (id: number, data: ProductFormData) => {
-    try {
-      await onEdit(id, data);
-    } catch (err) {
-      setSnackbar({
-        open: true,
-        message: err instanceof Error ? err.message : 'Failed to edit product.'
-      });
-    }
-  };
-
-  const handleDelete = async (id: number) => {
-    try {
-      await onDelete(id);
-    } catch (err) {
-      setSnackbar({
-        open: true,
-        message: err instanceof Error ? err.message : 'Failed to delete product.'
-      });
-    }
-  };
 
   return (
     <>
@@ -89,29 +60,15 @@ const ProductCard = ({ product, onEdit, onDelete }: ProductCardProps) => {
           </Box>
         </CardActions>
       </Card>
-      <Snackbar
-        open={snackbar.open}
-        autoHideDuration={3000}
-        onClose={() => setSnackbar((prev) => ({ ...prev, open: false }))}
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-      >
-        <Alert
-          severity='error'
-          onClose={() => setSnackbar((prev) => ({ ...prev, open: false }))}>
-          {snackbar.message}
-        </Alert>
-      </Snackbar>
-      <EditProductDialog
+      <AddOrEditProductDialog
         product={product}
         open={editProductDialogOpen}
         onClose={() => setEditProductDialogOpen(false)}
-        onEdit={handleEdit}
       />
       <DeleteProductDialog
         product={product}
         open={deleteProductDialogOpen}
         onClose={() => setDeleteProductDialogOpen(false)}
-        onDelete={handleDelete}
       />
     </>
   );
